@@ -5,7 +5,7 @@ import { getCmsConfig } from '@/utils'
 
 export default () => (
   <DefaultFooter
-    copyright={`2020 ${getCmsConfig('appName')}`}
+    copyright={`2020 ${getCmsConfig('copyright')}`}
     links={[
       {
         key: getCmsConfig('cmsTitle'),
@@ -18,7 +18,7 @@ export default () => (
       {
         key: 'github',
         title: <GithubOutlined />,
-        href: 'https://github.com/TencentCloudBase',
+        href: 'https://BeibuwanTech.github.io',
         blankTarget: true,
       },
       {

@@ -159,12 +159,12 @@ const Login: React.FC<{}> = () => {
         <div>
           <div className={styles.top}>
             <div className={styles.header}>
-              <a href="https://cloudbase.net" target="_blank">
-                <img alt="logo" className={styles.logo} src={getCmsConfig('cmsLogo')} />
+              <a href="https://BeibuwanTech.github.io" target="_blank">
+                {/* <img alt="logo" className={styles.logo} src={getCmsConfig('cmsLogo')} /> */}
                 <span className={styles.title}>{getCmsConfig('cmsTitle')}</span>
               </a>
             </div>
-            <div className={styles.desc}>打造云端一体化数据运营平台</div>
+            <div className={styles.desc}>打造云端一体化资源池构建工具</div>
           </div>
 
           <div className={styles.main}>

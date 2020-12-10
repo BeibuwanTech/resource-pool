@@ -52,7 +52,7 @@ const SchemaContent: React.FC = () => {
           </div>
         ) : (
           <div className="schema-empty">
-            <Empty description="创建你的模型，开始使用 CMS">
+            <Empty description="创建你的模型，开始使用资源池构建工具">
               <Button
                 type="primary"
                 onClick={() => {

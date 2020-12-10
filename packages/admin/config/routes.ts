@@ -49,7 +49,7 @@ const routesConfig: IConfig = {
         {
           exact: true,
           path: '/:projectId/schema',
-          name: '内容模型',
+          name: '资源模型',
           icon: 'gold',
           access: 'canSchema',
           wrappers: ['../components/SecurityWrapper/index'],
@@ -57,7 +57,7 @@ const routesConfig: IConfig = {
         },
         {
           path: '/:projectId/content',
-          name: '内容集合',
+          name: '资源集合',
           icon: 'database',
           access: 'canContent',
           wrappers: ['../components/SecurityWrapper/index'],
@@ -85,7 +85,7 @@ const routesConfig: IConfig = {
         {
           exact: true,
           path: '/:projectId/webhook',
-          name: 'Webbook',
+          name: '资源服务',
           icon: 'deployment-unit',
           access: 'canWebhook',
           wrappers: ['../components/SecurityWrapper/index'],
@@ -94,7 +94,7 @@ const routesConfig: IConfig = {
         {
           exact: true,
           path: '/:projectId/setting',
-          name: '项目设置',
+          name: '资源池设置',
           icon: 'setting',
           access: 'isAdmin',
           wrappers: ['../components/SecurityWrapper/index'],

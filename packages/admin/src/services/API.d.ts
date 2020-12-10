@@ -14,10 +14,10 @@ declare namespace API {
 
     avatar?: string
 
-    // 是否项目管理员
+    // 是否资源池管理员
     isAdmin: boolean
 
-    // 项目管理员
+    // 资源池管理员
     isProjectAdmin: boolean
 
     // 所有可访问的服务

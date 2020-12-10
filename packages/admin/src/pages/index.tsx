@@ -54,7 +54,7 @@ export default (): React.ReactNode => {
 
   return (
     <HomePage loading={loading}>
-      <Typography.Title level={3}>我的项目</Typography.Title>
+      <Typography.Title level={3}>我的资源池</Typography.Title>
       <div className="project-cards mt-10">
         {data?.length ? (
           <>
@@ -93,12 +93,12 @@ export default (): React.ReactNode => {
           </>
         ) : (
           <div className="empty-tip">
-            <Empty description="项目为空，请先创建项目后再操作" />
+            <Empty description="资源池为空，请先创建资源池后再操作" />
           </div>
         )}
       </div>
 
-      {/* 新项目创建 */}
+      {/* 新资源池创建 */}
       {isAdmin && <CreateProject onReload={() => setReload(reload + 1)} />}
     </HomePage>
   )
@@ -114,7 +114,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
         </div>
         <div className="right">
           {SERVER_MODE && (
-            <Tooltip title="当前 CMS 以容器服务模式运行">
+            <Tooltip title="当前资源池构建工具以容器服务模式运行">
               <CodeSandboxOutlined
                 style={{
                   ...IconStyle,
@@ -265,7 +265,7 @@ export const CreateProject: React.FC<{
 
   return (
     <>
-      <Typography.Title level={3}>新建项目</Typography.Title>
+      <Typography.Title level={3}>新建资源池</Typography.Title>
       <div className="project-cards mt-10">
         <Card
           hoverable
@@ -278,7 +278,7 @@ export const CreateProject: React.FC<{
           <div className="w-full flex flex-col items-center justify-start mt-12" onClick={() => {}}>
             <PlusSquareTwoTone style={{ fontSize: '60px' }} />
             <Typography.Title level={4} className="mt-5">
-              创建新项目
+              创建新资源池
             </Typography.Title>
           </div>
         </Card>
@@ -307,15 +307,15 @@ export const CreateProjectModal: React.FC<{
     },
     {
       manual: true,
-      onError: () => message.error('创建项目失败'),
-      onSuccess: () => message.success('创建项目成功'),
+      onError: () => message.error('创建资源池失败'),
+      onSuccess: () => message.success('创建资源池成功'),
     }
   )
 
   return (
     <Modal
       centered
-      title="创建项目"
+      title="创建资源池"
       footer={null}
       visible={visible}
       onOk={() => onClose()}
@@ -331,29 +331,29 @@ export const CreateProjectModal: React.FC<{
         }}
       >
         <Form.Item
-          label="项目名"
+          label="资源池名"
           name="name"
-          rules={[{ required: true, message: '请输入项目名！' }]}
+          rules={[{ required: true, message: '请输入资源池名！' }]}
         >
-          <Input placeholder="项目名，如官网" />
+          <Input placeholder="资源池名，如研发服务" />
         </Form.Item>
 
         <Form.Item
-          label="项目 Id"
+          label="资源池 Id"
           name="customId"
           rules={[
-            { required: true, message: '请输入项目 Id！' },
+            { required: true, message: '请输入资源池 Id！' },
             {
               pattern: /^[a-zA-Z0-9]{1,16}$/,
-              message: '项目 Id 仅支持字母与数字，不大于 16 个字符',
+              message: '资源池 Id 仅支持字母与数字，不大于 16 个字符',
             },
           ]}
         >
-          <Input placeholder="项目 Id，如 website，仅支持字母与数字，不大于 16 个字符" />
+          <Input placeholder="资源池 Id，如 website，仅支持字母与数字，不大于 16 个字符" />
         </Form.Item>
 
-        <Form.Item label="项目介绍" name="description">
-          <Input placeholder="项目介绍，如官网内容管理" />
+        <Form.Item label="资源池介绍" name="description">
+          <Input placeholder="资源池介绍，如官网内容管理" />
         </Form.Item>
 
         <Form.Item>

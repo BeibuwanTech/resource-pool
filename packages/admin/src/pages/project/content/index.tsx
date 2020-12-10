@@ -57,9 +57,9 @@ export default (): React.ReactNode => {
               projectId={projectId}
               desc={
                 <>
-                  <span>内容模型为空 🤔</span>
+                  <span>资源模型为空 🤔</span>
                   <br />
-                  <span>请先创建你的内容模型，再创建内容文档</span>
+                  <span>请先创建你的资源模型，再创建资源文档</span>
                 </>
               }
             />

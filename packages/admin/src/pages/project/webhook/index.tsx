@@ -157,7 +157,7 @@ export default (): React.ReactNode => {
   return (
     <PageContainer
       className="page-container"
-      content="Webhook 可以用于在内容管理员修改内容数据后，自动回调外部系统，比如自动构建静态网站、发送通知等"
+      content="资源服务可以用于在内容管理员修改内容数据后，自动回调外部系统，比如自动构建静态网站、发送通知等"
     >
       <Tabs>
         <TabPane tab="Webhooks" key="webhooks">

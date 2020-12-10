@@ -4,7 +4,8 @@ const InnerDefaultValue: Partial<ITcbCmsConfing> = {
   cmsLogo: './icon.svg',
   cmsDocLink: 'https://docs.cloudbase.net/cms/intro.html',
   cmsHelpLink: 'https://support.qq.com/products/148793',
-  officialSiteLink: 'https://cloudbase.net',
+  officialSiteLink: 'https://BeibuwanTech.github.io',
+  copyright: '海南大学信息与通信工程学院出品'
 }
 
 /**

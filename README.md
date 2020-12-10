@@ -6,28 +6,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-<p align="center">
-  <img src="./docs/assets/banner.jpg" alt="Logo">
-  <h3 align="center">
-    打造一站式云端内容管理系统
-  </h3>
-  <p align="center">
-    <br />
-    <a href="https://cms-demo-1252710547.tcloudbaseapp.com">
-      <strong>✨ 在线示例（账号密码见微信群公告）»</strong>
-    </a>
-    <br />
-    <br />
-    <a href="https://docs.cloudbase.net/cms/intro.html" target="_blank">文档</a>
-    ·
-    <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">报告 Bug</a>
-    ·
-    <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">特性建议</a>
-  </p>
-</p>
-
-CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理平台，提供了丰富的内容管理功能，安装简单，易于二次开发，并与云开发的生态体系紧密结合，助力开发者提升开发效率。
-
 ## 功能特性
 
 | 特性       | 介绍                                                                       |
@@ -39,66 +17,11 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 | 数据源兼容 | 支持管理已有的云开发数据，也可以在 CMS 后台创建新的内容和数据集合          |
 | 部署简单   | 可在云开发控制台扩展管理界面一键部署和升级，也可通过项目提供的脚本自动部署 |
 
-## 🚀 快速开始
-
-你可以通过下面的方式快速部署 CloudBase CMS
-
-<!-- ### 一键部署
-
-使用一键部署，将 CMS 部署到云托管。
-
-[![](https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg)](https://console.cloud.tencent.com/tcb/env/index?action=CreateAndDeployCloudBaseProject&tdl_anchor=github&tdl_site=0&appUrl=https://github.com/TencentCloudBase/cloudbase-extension-cms)
-
-**注：一键部署使用云托管部署，将会运行费用，计费标准[参考文档](https://cloud.tencent.com/document/product/1243/48037)。** -->
-
-### 扩展安装
-
-在[云开发控制台](https://console.cloud.tencent.com/tcb/extensions/index)安装
-
-### 源码部署
-
-参考 CMS 使用说明[文档](https://docs.cloudbase.net/cms/install/source.html)
-
-## [示例](https://cms-demo-1252710547.tcloudbaseapp.com)
-
-![](https://main.qcloudimg.com/raw/9fde303ac81a3d3028552f73337726ee.png)
-
-![](https://main.qcloudimg.com/raw/feb1a82b40ab99dd131add674c82fd2d.png)
-
 ## 技术栈
 
 - ❤️ React
 - ❤️ Node.js + Nest.js + [CloudBase](https://cloudbase.net)
 - ❤️ TypeScript
-
-## 使用案例
-
-<table>
-  <tr>
-    <td align="center"><a href="https://cloudbase.net">
-      <img src="./docs/examples/cloudbase.png" width="100px;" alt=""/>
-      <br /><sub><b>云开发</b></sub></a>
-    </td>
-    <td align="center">
-      <a href="https://face.xiaoxili.com/">
-      <img src="./docs/examples/hi-avatar.jpg" width="100px;" alt=""/><br />
-      <sub><b>Hi 头像</b></sub>
-    </a>
-    </td>
-    <td align="center"><a href="https://featwork.com/blog">
-      <img src="./docs/examples/featblog.png" width="100px;" alt=""/>
-      <br /><sub><b>轻博客</b></sub></a>
-    </td>
-    <td align="center">
-      <img src="./docs/examples/yami.png" width="100px;" alt=""/>
-      <br /><sub><b>密鸭车服</b></sub>
-    </td>
-    <td align="center"><a href="https://github.com/wforguo/wedding-app">
-      <img src="./docs/examples/wedding-app.jpeg" width="100px;" alt=""/>
-      <br /><sub><b>趣婚礼</b></sub></a>
-    </td>
-  </tr>
-</table>
 
 ## RoadMap
 
@@ -129,28 +52,6 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 | 支持枚举类型                                     | 🚀 已完成 | V2.0     |
 | 细粒度角色权限管理权限控制                       | 🚀 已完成 | V2.0     |
 
-## 在线交流
-
-如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CMS 入群。
-
-<div align="center">
-  <img src="https://main.qcloudimg.com/raw/c78005f04eb42e64e687cb690798af13.png" height="300px" />
-  <img src="https://main.qcloudimg.com/raw/b0e6c47ee41ef561cd02ec9e2af6c3b1.jpg" height="300px" alt=""/>
-  <img src="https://main.qcloudimg.com/raw/a07b103a276b42fa727102e66c54f787.jpg" height="300px" alt=""/>
-</div>
-
-## 🤝 贡献指南
-
-欢迎大家参与到 CloudBase CMS 的开发工作，贡献一份力量
-
-您可以选择如下的贡献方式：
-
-- 贡献一篇技术文章
-- 贡献代码，提交 Pull Request
-- 反馈 bug，提交 Issue
-- 在技术会议上发表技术演讲
-- 贡献方式请参考 贡献指南 文档
-
 ### 本地开发
 
 参考[贡献指南](./CONTRIBUTING.md)
@@ -158,10 +59,6 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 ## 更新日志
 
 见[更新日志](./CHANGELOG.md)
-
-## 📝 License
-
-开源协议文档请参阅 [Apache License 2.0](./LICENSE)
 
 ## Contributors ✨
 
