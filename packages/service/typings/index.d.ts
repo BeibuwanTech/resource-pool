@@ -43,7 +43,7 @@ interface UserRole {
 /**
  * 限制
  * 项目 Id 为 * 时，资源必然为 *
- * 服务未 * 时，资源必然为 *
+ * 服务为 * 时，资源必然为 *
  */
 interface Permission {
   // 项目
@@ -64,7 +64,7 @@ interface Permission {
 }
 
 interface RequestUser extends User {
-  // 用户可以访问的资源
+  // 用户可以访问的项目资源
   projectResource?: {
     [key: string]: '*' | string[]
   }
@@ -83,10 +83,4 @@ interface RequestUser extends User {
 
   // 用户关联的角色信息
   userRoles?: UserRole[]
-}
-
-interface AuthRequest extends Request {
-  handleService: string
-
-  cmsUser: RequestUser
 }

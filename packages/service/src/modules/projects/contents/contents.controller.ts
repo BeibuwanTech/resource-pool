@@ -12,9 +12,9 @@ import {
 } from '@nestjs/common'
 import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 import { UnsupportedOperation } from '@/common'
-import { checkAccessAndGetResource } from '@/utils'
+import { checkAccessAndGetResource, getCollectionSchema } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { ContentsService } from './contents.service'
 import { WebhooksService } from '../webhooks/webhooks.service'
@@ -68,22 +68,33 @@ export class ContentsController {
   async getContentSchemas(
     @Param('projectId') projectId,
     @Query() query: SchemaQuery,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const { page = 1, pageSize = 100 } = query
 
     const collectionNames = checkAccessAndGetResource(projectId, req)
 
     const $ = this.cloudbaseService.db.command
-    const filter: any = {}
-    projectId && (filter.projectId = projectId)
+
+    let filter: any = {}
+    let filterCollection
 
     if (collectionNames !== '*') {
-      filter.collectionName = $.in(collectionNames)
+      filterCollection = $.in(collectionNames)
+    }
+
+    if (projectId) {
+      filter = $.or(
+        { projectId, collectionName: filterCollection },
+        {
+          collectionName: filterCollection,
+          projectIds: $.elemMatch($.eq(projectId)),
+        }
+      )
     }
 
     const { data, requestId } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where(filter)
       .skip(Number(page - 1) * Number(pageSize))
       .limit(Number(pageSize))
@@ -95,13 +106,30 @@ export class ContentsController {
     }
   }
 
+  @Get(':schemaId')
+  async getContentSchema(@Param() params, @Request() req: IRequest) {
+    const { projectId, schemaId } = params
+
+    checkAccessAndGetResource(projectId, req, schemaId)
+
+    const {
+      data: [schema],
+      requestId,
+    } = await this.cloudbaseService.collection(Collection.Schemas).doc(schemaId).get()
+
+    return {
+      data: schema,
+      requestId,
+    }
+  }
+
   // Admin Panel 入口
   @Post()
   @HttpCode(200)
   async handleAction(
     @Param('projectId') projectId,
     @Body() body: ActionBody,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const {
       action,
@@ -140,18 +168,11 @@ export class ContentsController {
   }
 
   // 二次校验权限
-  private async checkResourcePermission(projectId: string, req: AuthRequest, resource: string) {
+  private async checkResourcePermission(projectId: string, req: IRequest, resource: string) {
     // 检查 CMS 系统角色
     checkAccessAndGetResource(projectId, req, resource)
 
-    const {
-      data: [schema],
-    } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
-      .where({
-        collectionName: resource,
-      })
-      .get()
+    const schema = await getCollectionSchema(resource)
 
     // CMS 只能操作 CMS 管理的集合，不能操作非 CMS 管理的集合
     if (!schema) {

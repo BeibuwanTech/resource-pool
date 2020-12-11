@@ -1,13 +1,13 @@
 import _ from 'lodash'
 
 import { Controller, Get, Post, Delete, Body, Query, Param, UseGuards, Patch } from '@nestjs/common'
-import { CollectionV2, SystemUserRoles } from '@/constants'
+import { Collection, SystemUserRoles, SYSTEM_ROLE_IDS } from '@/constants'
 import { RecordExistException, RecordNotExistException } from '@/common'
 import { CloudBaseService } from '@/services'
 import { PermissionGuard } from '@/guards'
 import { UserRole } from './role.dto'
 
-@UseGuards(PermissionGuard('role', ['administrator']))
+@UseGuards(PermissionGuard('role', [SYSTEM_ROLE_IDS.ADMIN]))
 @Controller('roles')
 export class RoleController {
   constructor(private readonly cloudbaseService: CloudBaseService) {}
@@ -82,7 +82,7 @@ export class RoleController {
     const $ = this.cloudbaseService.db.command
     const {
       data: [bindUser],
-    } = await this.collection(CollectionV2.Users)
+    } = await this.collection(Collection.Users)
       .where({
         roles: $.elemMatch($.eq(id)),
       })
@@ -94,7 +94,7 @@ export class RoleController {
     return this.collection().doc(id).remove()
   }
 
-  private collection(collection = CollectionV2.CustomUserRoles) {
+  private collection(collection = Collection.CustomUserRoles) {
     return this.cloudbaseService.collection(collection)
   }
 }
