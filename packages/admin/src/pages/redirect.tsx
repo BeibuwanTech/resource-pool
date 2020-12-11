@@ -11,7 +11,7 @@ export default () => {
     return history.push('/home')
   }
 
-  // 获取项目信息
+  // 获取资源池信息
   const { data: schema } = useRequest<{ data: Schema }>(() => getCollectionInfo(collectionName))
 
   useEffect(() => {

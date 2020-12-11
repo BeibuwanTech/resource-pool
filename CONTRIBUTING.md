@@ -1,17 +1,4 @@
-# CloudBase CMS 贡献指南
-
-## 成为贡献者
-
-感谢您有兴趣成为 CloudBase CMS 社区贡献者！
-
-您可以选择如下的贡献方式：
-
-- [贡献一篇技术文章](./community/posts/README.md)
-- 贡献代码，提交 Pull Request
-- 反馈 bug，提交 Issue
-- 在技术会议上发表技术演讲
-
-我们会将您加入[我们的贡献者名单](https://github.com/TencentCloudBase/cloudbase-extensions-cms)
+# 贡献指南
 
 ## 本地开发
 

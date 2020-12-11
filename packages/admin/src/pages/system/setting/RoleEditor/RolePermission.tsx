@@ -18,7 +18,7 @@ const RolePermission: React.FC<{
   const [permissionType, setPermissionType] = useState('project')
   const [formValue, setFormValue] = useState<any>({})
 
-  // 加载项目
+  // 加载资源池
   const { data: projects = [], loading: projectLoading } = useRequest(() => getProjects(), {
     cacheKey: 'setting-role-project',
   })
@@ -56,7 +56,7 @@ const RolePermission: React.FC<{
           {/* <Select.Option disabled value="system">
             系统权限 - 暂不支持
           </Select.Option> */}
-          <Select.Option value="project">项目权限</Select.Option>
+          <Select.Option value="project">资源池权限</Select.Option>
         </Select>
       </Form.Item>
       <Form.Item
@@ -64,7 +64,7 @@ const RolePermission: React.FC<{
         label={
           <>
             <Text>权限规则</Text>
-            <Text type="secondary">（四元素：项目 - 操作 - 服务 - 资源）</Text>
+            <Text type="secondary">（四元素：资源池 - 操作 - 服务 - 资源）</Text>
             <a href="https://docs.cloudbase.net/cms/permission.html" target="_blank">
               <QuestionCircleTwoTone />
             </a>
@@ -91,9 +91,9 @@ const RolePermission: React.FC<{
                               },
                             ]}
                           >
-                            <Select loading={projectLoading} placeholder="项目">
+                            <Select loading={projectLoading} placeholder="资源池">
                               <Select.Option key="all" value="*">
-                                全部项目
+                                全部资源池
                               </Select.Option>
                               {projects?.map((project: any) => (
                                 <Select.Option key={project._id} value={project._id}>
@@ -130,26 +130,26 @@ const RolePermission: React.FC<{
                             rules={[
                               {
                                 required: true,
-                                message: '请选择项目服务！',
+                                message: '请选择资源池服务！',
                               },
                             ]}
                           >
-                            <Select placeholder="项目中的服务">
+                            <Select placeholder="资源池中的服务">
                               <Select.Option value="*">
                                 <h4>全部服务</h4>
-                                <div>内容模型、内容集合、Webhook 等全部服务</div>
+                                <div>资源模型、资源集合、资源服务等全部服务</div>
                               </Select.Option>
                               <Select.Option value="schema">
-                                <h4>内容模型</h4>
-                                <div>内容模型操作，如创建、修改模型等</div>
+                                <h4>资源模型</h4>
+                                <div>资源模型操作，如创建、修改模型等</div>
                               </Select.Option>
                               <Select.Option value="content">
-                                <h4>内容集合</h4>
-                                <div>指定内容集合的管理，如创建、修改内容等</div>
+                                <h4>资源集合</h4>
+                                <div>指定资源集合的管理，如创建、修改内容等</div>
                               </Select.Option>
                               <Select.Option value="webhook">
-                                <h4>Webhook</h4>
-                                <div>Webhook 管理操作，如创建、修改 Webhook 等</div>
+                                <h4>资源服务</h4>
+                                <div>资源服务管理操作，如创建、修改资源服务等</div>
                               </Select.Option>
                             </Select>
                           </Form.Item>
@@ -161,7 +161,7 @@ const RolePermission: React.FC<{
                             rules={[
                               {
                                 required: true,
-                                message: '请选择内容集合！',
+                                message: '请选择资源集合！',
                               },
                             ]}
                           >
@@ -268,7 +268,7 @@ const ResourceSelect: React.FC<{
         if (!service) {
           message.error('请选择服务')
         } else if (!projectId) {
-          message.error('请选择项目')
+          message.error('请选择资源池')
         }
       }}
     >

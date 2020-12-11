@@ -15,7 +15,7 @@ export default {
   'layout.user.link.terms': '条款',
   'layout.global.error.stack': '错误堆栈',
   'layout.global.error.title': '出错了，可点击右下角进行反馈',
-  'app.preview.down.block': '下载此页面到本地项目',
+  'app.preview.down.block': '下载此页面到本地资源池',
   'app.welcome.link.fetch-blocks': '获取全部区块',
   'app.welcome.link.block-list': '基于 block 开发，快速构建标准页面',
   ...globalHeader,

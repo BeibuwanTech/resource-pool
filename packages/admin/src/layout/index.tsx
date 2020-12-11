@@ -30,26 +30,26 @@ const customMenuDate: MenuDataItem[] = [
   {
     authority: 'canSchema',
     path: '/:projectId/schema',
-    name: '内容模型',
+    name: '资源模型',
     icon: <GoldTwoTone />,
   },
   {
     authority: 'canContent',
     path: '/:projectId/content',
-    name: '内容集合',
+    name: '资源集合',
     icon: <DatabaseTwoTone />,
     children: [],
   },
   {
     authority: 'canWebhook',
     path: '/:projectId/webhook',
-    name: 'Webbook',
+    name: '资源服务',
     icon: <RocketTwoTone />,
   },
   {
     authority: 'isAdmin',
     path: '/:projectId/setting',
-    name: '项目设置',
+    name: '资源池设置',
     icon: <SettingTwoTone />,
   },
 ]
@@ -131,7 +131,7 @@ const Layout: React.FC<any> = (props) => {
           strict: false,
         })
 
-        // 项目 Id
+        // 资源池 Id
         const { projectId = '' } = match?.params || {}
 
         if (menuItemProps.isUrl || menuItemProps.children) {

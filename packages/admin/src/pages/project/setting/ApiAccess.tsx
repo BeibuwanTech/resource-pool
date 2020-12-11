@@ -301,7 +301,7 @@ export default (): React.ReactElement => {
     return (
       <>
         <Typography.Title level={3}>API 访问</Typography.Title>
-        <Alert type="info" message="此项目未开启 API 访问" style={{ marginBottom: '10px' }} />
+        <Alert type="info" message="此资源池未开启 API 访问" style={{ marginBottom: '10px' }} />
         <Space>
           <Switch
             loading={changeLoading}

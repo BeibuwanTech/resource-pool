@@ -14,7 +14,7 @@ const StatusMap = {
 }
 
 interface MigrateJobDto {
-  // 项目 Id
+  // 资源池 Id
   projectId: string
 
   // 任务 Id

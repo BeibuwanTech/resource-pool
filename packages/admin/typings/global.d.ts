@@ -7,7 +7,7 @@ interface Project {
 
   description: string
 
-  // 项目封面图
+  // 资源池封面图
   cover?: string
 
   // 是否开启 Api 访问

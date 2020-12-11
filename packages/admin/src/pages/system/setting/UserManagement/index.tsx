@@ -145,8 +145,8 @@ export const SystemUserRoles = [
   },
   {
     _id: 'project:administrator',
-    roleName: '项目管理员',
-    description: '允许管理系统内的所有项目及项目内的资源',
+    roleName: '资源池管理员',
+    description: '允许管理系统内的所有资源池及资源池内的资源',
     polices: [
       {
         action: ['*'],

@@ -8,12 +8,12 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [projectName, setProjectName] = useState('')
 
-  // 删除项目
+  // 删除资源池
   const { run, loading } = useRequest(
     async () => {
       await deleteProject(projectId)
       setModalVisible(false)
-      message.success('删除项目成功')
+      message.success('删除资源池成功')
       setTimeout(() => {
         history.push('/home')
       }, 2000)
@@ -34,11 +34,11 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
           setModalVisible(true)
         }}
       >
-        删除项目
+        删除资源池
       </Button>
       <Modal
         centered
-        title="删除项目"
+        title="删除资源池"
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
         onOk={() => run()}
@@ -49,11 +49,11 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
       >
         <Space direction="vertical">
           <Typography.Paragraph strong>
-            删除项目会删除项目中的内容模型及 Webhooks 等数据
+            删除资源池会删除资源池中的资源模型及资源服务等数据
           </Typography.Paragraph>
           <Typography.Paragraph strong>
-            删除项目是不能恢复的，您确定要删除此项目吗？
-            如果您想继续，请在下面的方框中输入此项目的名称：
+            删除资源池是不能恢复的，您确定要删除此资源池吗？
+            如果您想继续，请在下面的方框中输入此资源池的名称：
             <Typography.Text strong mark>
               {project.name}
             </Typography.Text>
@@ -78,7 +78,7 @@ export default (): React.ReactElement => {
       await updateProject(projectId, payload)
       setChanged(false)
       setReload(reload + 1)
-      message.success('项目更新成功！')
+      message.success('资源池更新成功！')
     },
     {
       manual: true,
@@ -91,7 +91,7 @@ export default (): React.ReactElement => {
 
   return (
     <>
-      <Typography.Title level={3}>项目信息</Typography.Title>
+      <Typography.Title level={3}>资源池信息</Typography.Title>
       <Divider />
       <Form
         name="basic"
@@ -109,19 +109,19 @@ export default (): React.ReactElement => {
           }
         }}
       >
-        <Form.Item label="项目 Id">
+        <Form.Item label="资源池 Id">
           <Typography.Paragraph copyable>{project?._id}</Typography.Paragraph>
         </Form.Item>
         <Form.Item
-          label="项目名"
+          label="资源池名称"
           name="name"
-          rules={[{ required: true, message: '请输入项目名！' }]}
+          rules={[{ required: true, message: '请输入资源池名称！' }]}
         >
-          <Input placeholder="项目名，如个人博客" />
+          <Input placeholder="资源池名称，如研发服务" />
         </Form.Item>
 
-        <Form.Item label="项目介绍" name="description">
-          <Input placeholder="项目介绍，如我的个人博客" />
+        <Form.Item label="资源池介绍" name="description">
+          <Input placeholder="资源池介绍，如研发服务资源池" />
         </Form.Item>
 
         <Form.Item>

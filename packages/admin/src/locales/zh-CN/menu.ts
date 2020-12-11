@@ -32,7 +32,7 @@ export default {
   'menu.list.card-list': '卡片列表',
   'menu.list.search-list': '搜索列表',
   'menu.list.search-list.articles': '搜索列表（文章）',
-  'menu.list.search-list.projects': '搜索列表（项目）',
+  'menu.list.search-list.projects': '搜索列表（资源池）',
   'menu.list.search-list.applications': '搜索列表（应用）',
   'menu.profile': '详情页',
   'menu.profile.basic': '基础详情页',

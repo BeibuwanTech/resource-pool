@@ -20,7 +20,7 @@ export default (): React.ReactNode => {
     <PageContainer>
       <ProCard>
         <Tabs tabPosition="left" defaultActiveKey="1">
-          <TabPane tab="项目" key="1">
+          <TabPane tab="资源池" key="1">
             <TabPaneContent>
               <ProjectInfo />
             </TabPaneContent>

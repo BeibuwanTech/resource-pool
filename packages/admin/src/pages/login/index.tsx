@@ -169,7 +169,7 @@ const Login: React.FC<{}> = () => {
                   <span className={styles.title}>{getCmsConfig('cmsTitle')}</span>
                 </a>
               </div>
-              <div className={styles.desc}>打造云端一体化数据运营平台</div>
+              <div className={styles.desc}>打造云端一体化资源池构建工具</div>
             </div>
 
             <div className={styles.main}>
