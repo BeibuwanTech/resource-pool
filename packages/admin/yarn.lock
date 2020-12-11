@@ -2070,11 +2070,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/classnames@^2.2.7":
-  version "2.2.11"
-  resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.11.tgz#2521cc86f69d15c5b90664e4829d84566052c1cf"
-  integrity sha512-2koNhpWm3DgWRp5tpkiJ8JGc1xTn2q0l+jUNUE7oMKXUf5NpI9AIdC4kbjGNFBdHtcxBD18LAksoudAVhFKCjw==
-
 "@types/color-convert@*":
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/@types/color-convert/-/color-convert-1.9.0.tgz#bfa8203e41e7c65471e9841d7e306a7cd8b5172d"
@@ -2260,7 +2255,7 @@
 
 "@types/jsonexport@^3.0.1":
   version "3.0.1"
-  resolved "http://r.tnpm.oa.com/@types%2fjsonexport/-/jsonexport-3.0.1.tgz#05d5daf0909d82b0d45d98525c29acd7718c6710"
+  resolved "https://registry.yarnpkg.com/@types/jsonexport/-/jsonexport-3.0.1.tgz#05d5daf0909d82b0d45d98525c29acd7718c6710"
   integrity sha512-3kL9SSzykzoIchP2vE0jEdBJh7YOFTOGvTJhQa0uPXqYNADYXIcsamUZuexfAfIo1ufpwjNfCgzDtsp1Vu7lYg==
   dependencies:
     "@types/node" "*"
@@ -17068,10 +17063,10 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vditor@^3.5.4:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/vditor/-/vditor-3.6.2.tgz#ee6011efa3ec563c6356ed82efbf2e00ba2e35c6"
-  integrity sha512-HPHHun5+IXmYGMKDWcUD83VfP1Qfncz7DmaIKoWpluJgE8ve7s+4RbFBcaEpYPXYzIuL2UTHoMnIjmTPbenOCA==
+vditor@^3.7.1:
+  version "3.7.1"
+  resolved "http://r.tnpm.oa.com/vditor/-/vditor-3.7.1.tgz#09ea23212416c4f1a129ec3863bbc52f47251bb1"
+  integrity sha512-/yen904xluZ9CVRZqeEUULZDBV7FdANhtlwracOAkaeQoYMEqT7xqLpJsJPEk6OHJ4MtFXSIGodDAM5H9DskTQ==
   dependencies:
     diff-match-patch "^1.0.5"
 

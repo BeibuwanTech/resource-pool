@@ -14,8 +14,8 @@ import {
 import { PermissionGuard } from '@/guards'
 import { UnauthorizedOperation, RecordExistException } from '@/common'
 import { CloudBaseService } from '@/services'
-import { CollectionV2 } from '@/constants'
-import { dateToNumber } from '@/utils'
+import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
+import { dateToUnixTimestampInMs } from '@/utils'
 import { ProjectsService } from './projects.service'
 
 @Controller('projects')
@@ -26,7 +26,7 @@ export class ProjectsController {
   ) {}
 
   @Get(':id')
-  async getProject(@Param('id') id: string, @Request() req: AuthRequest) {
+  async getProject(@Param('id') id: string, @Request() req: IRequest) {
     this.checkAccessAndGetProjects(req, id)
 
     const { data } = await this.collection().doc(id).get()
@@ -39,7 +39,7 @@ export class ProjectsController {
   @Get()
   async getProjects(
     @Query() query: { page?: number; pageSize?: number } = {},
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const { page = 1, pageSize = 100 } = query
     const filter: any = {}
@@ -66,14 +66,14 @@ export class ProjectsController {
   }
 
   // 系统管理员才能创建项目
-  @UseGuards(PermissionGuard('project', ['administrator']))
+  @UseGuards(PermissionGuard('project', [SYSTEM_ROLE_IDS.ADMIN]))
   @Post()
   async createProject(@Body() body: Project) {
     const { name } = body
 
     // 检查同名项目是否已经存在
     const { data } = await this.cloudbaseService
-      .collection(CollectionV2.Projects)
+      .collection(Collection.Projects)
       .where({
         name,
       })
@@ -86,14 +86,14 @@ export class ProjectsController {
 
     const project = {
       ...body,
-      _createTime: dateToNumber(),
+      _createTime: dateToUnixTimestampInMs(),
     }
     return this.collection().add(project)
   }
 
   // 系统管理员才能更新项目
   @Patch(':id')
-  @UseGuards(PermissionGuard('project', ['administrator']))
+  @UseGuards(PermissionGuard('project', [SYSTEM_ROLE_IDS.ADMIN]))
   async updateProject(
     @Param('id') id: string,
     @Body() payload: Partial<Project> & { keepApiPath?: boolean } = {}
@@ -150,31 +150,32 @@ export class ProjectsController {
   }
 
   // 系统管理员才能删除项目
-  @UseGuards(PermissionGuard('project', ['administrator']))
+  @UseGuards(PermissionGuard('project', [SYSTEM_ROLE_IDS.ADMIN]))
   @Delete(':id')
   async deleteProject(@Param('id') id: string) {
     // 删除此项目的 schema
-    await this.collection(CollectionV2.Schemas)
+    await this.collection(Collection.Schemas)
       .where({
         projectId: id,
       })
       .remove()
 
     // 删除此项目的 Webhooks
-    await this.collection(CollectionV2.Webhooks)
+    await this.collection(Collection.Webhooks)
       .where({
         projectId: id,
       })
       .remove()
 
+    // 删除项目
     return this.collection().doc(id).remove()
   }
 
-  private collection(collection = CollectionV2.Projects) {
+  private collection(collection = Collection.Projects) {
     return this.cloudbaseService.collection(collection)
   }
 
-  private checkAccessAndGetProjects(req: AuthRequest, projectId?: string) {
+  private checkAccessAndGetProjects(req: IRequest, projectId?: string) {
     const { projectResource = {} } = req.cmsUser
 
     // projectResource 为空，无权限

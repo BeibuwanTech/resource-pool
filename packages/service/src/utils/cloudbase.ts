@@ -3,18 +3,24 @@ import request from 'request'
 import cloudbase from '@cloudbase/node-sdk'
 import CloudBaseManager from '@cloudbase/manager-node'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
+import { Collection } from '@/constants'
 import { isDevEnv } from './tools'
+import { MemoryCache } from './cache'
 
-// 从环境变量中读取
+let nodeApp
+let managerApp
+let secretManager: SecretManager
+const schemaCache = new MemoryCache()
+
+// 从环境变量中获取 envId
 export const getEnvIdString = (): string => {
   const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID } = process.env
   return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
 }
 
-let nodeApp
-let managerApp
-let secretManager: SecretManager
-
+/**
+ * 获取初始化后的 cloudbase node sdk 实例
+ */
 export const getCloudBaseApp = () => {
   if (nodeApp) {
     return nodeApp
@@ -39,6 +45,9 @@ export const getCloudBaseApp = () => {
   return app
 }
 
+/**
+ * 获取初始化后的 cloudbase manager sdk 实例
+ */
 export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
   if (managerApp) {
     return managerApp
@@ -71,6 +80,9 @@ export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
   return manager
 }
 
+/**
+ * 从 credential header 中获取用户信息
+ */
 export const getUserFromCredential = async (credential: string, origin: string) => {
   const envId = getEnvIdString()
   const region = process.env.TENCENTCLOUD_REGION || 'ap-shanghai'
@@ -101,13 +113,62 @@ export const getUserFromCredential = async (credential: string, origin: string) 
   return res.data
 }
 
+/**
+ * 获取集合的 Schema
+ */
+export async function getCollectionSchema(collection: string): Promise<Schema>
+export async function getCollectionSchema(): Promise<Schema[]>
+
+export async function getCollectionSchema(collection?: string) {
+  const cacheSchema = collection ? schemaCache.get(collection) : schemaCache.get('SCHEMAS')
+  if (cacheSchema) return cacheSchema
+
+  const app = getCloudBaseApp()
+
+  const query = collection
+    ? {
+        collectionName: collection,
+      }
+    : {}
+
+  const { data }: { data: Schema[] } = await app
+    .database()
+    .collection(Collection.Schemas)
+    .where(query)
+    .limit(1000)
+    .get()
+
+  if (collection) {
+    schemaCache.set(collection, data[0])
+  } else {
+    schemaCache.set('SCHEMAS', data)
+  }
+
+  return collection ? data[0] : data
+}
+
+/**
+ * 清除 schema 缓存
+ */
+export const clearSchemaCache = (collection: string) => {
+  // 清除 collection 对应的缓存
+  schemaCache.del(collection)
+  // schema 变更时，schemas 也失效，清除 SCHEMAS（全部 schema 数组）缓存
+  schemaCache.del('SCHEMAS')
+}
+
 // 以服务器模式运行，即通过监听端口的方式运行
 export const isRunInServerMode = () =>
   process.env.NODE_ENV === 'development' ||
   !process.env.TENCENTCLOUD_RUNENV ||
   !!process.env.KUBERNETES_SERVICE_HOST
 
+// 是否在云托管中运行
 export const isRunInContainer = () => !!process.env.KUBERNETES_SERVICE_HOST
+
+/**
+ * 从容器运行环境中获取临时秘钥
+ */
 
 interface Secret {
   secretId: string
@@ -115,7 +176,6 @@ interface Secret {
   token: string
   expire: number // 过期时间，单位：秒
 }
-
 export default class SecretManager {
   private tmpSecret: Secret | null
   private TMP_SECRET_URL: string
