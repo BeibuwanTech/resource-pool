@@ -164,8 +164,8 @@ const Login: React.FC<{}> = () => {
           <div className="mt-10 mb-10">
             <div className={styles.top}>
               <div className={styles.header}>
-                <a href="https://cloudbase.net" target="_blank">
-                  <img alt="logo" className={styles.logo} src={getCmsConfig('cmsLogo')} />
+                <a href="https://beibuwan.tech" target="_blank">
+                  {/* <img alt="logo" className={styles.logo} src={getCmsConfig('cmsLogo')} /> */}
                   <span className={styles.title}>{getCmsConfig('cmsTitle')}</span>
                 </a>
               </div>
