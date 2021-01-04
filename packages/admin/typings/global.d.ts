@@ -1,18 +1,24 @@
-interface Project {
-  _id: string
+type DateFormatType = 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
 
-  name: string
+type DateFieldType = 'Date' | 'Time' | 'DateTime'
 
-  customId: string
+type NormalFieldType =
+  | 'String'
+  | 'MultiLineString'
+  | 'Number'
+  | 'Boolean'
+  | 'File'
+  | 'Media'
+  | 'Image'
+  | 'Email'
+  | 'Tel'
+  | 'Url'
+  | 'RichText'
+  | 'Markdown'
+  | 'Connect'
+  | 'Array'
+  | 'Enum'
+  | 'Object'
+  | 'Text'
 
-  description: string
-
-  // 资源池封面图
-  cover?: string
-
-  // 是否开启 Api 访问
-  enableApiAccess: boolean
-
-  // Api 访问路径
-  apiAccessPath: string
-}
+type SchemaFieldType = NormalFieldType | DateFieldType

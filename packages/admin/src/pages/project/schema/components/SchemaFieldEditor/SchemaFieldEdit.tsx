@@ -19,7 +19,7 @@ import {
 import { ContentCtx, SchmeaCtx } from 'typings/store'
 import { getFieldDefaultValueInput, getFieldFormItem } from './Field'
 import { FieldTypes, SYSTEM_FIELDS } from '@/common'
-import { formatTimeByType, isDateType, isResourceType, random } from '@/utils'
+import { formatStoreTimeByType, isDateType, isResourceType, random } from '@/utils'
 
 const { TextArea } = Input
 const { Text } = Typography
@@ -203,7 +203,7 @@ export const SchemaFieldEditorModal: React.FC<{
 
           // 格式化默认时间，与 dateFormatType 保持一致
           if (v.dateFormatType && v.defaultValue) {
-            v.defaultValue = formatTimeByType(v.defaultValue, v.dateFormatType)
+            v.defaultValue = formatStoreTimeByType(v.defaultValue, v.dateFormatType)
           }
 
           createField(v)
@@ -259,6 +259,13 @@ export const SchemaFieldEditorModal: React.FC<{
                 ? [
                     {
                       validator: (_, value) => {
+                        // 空值不校验
+                        // 值的类型为 object 时，说明已经是合法的值，无需要再校验
+                        if (
+                          typeof value === 'undefined' ||
+                          (typeof value === 'object' && value !== null)
+                        )
+                          return Promise.resolve()
                         try {
                           const json = JSON.parse(value)
                           if (typeof json !== 'object') {
@@ -304,7 +311,7 @@ export const SchemaFieldEditorModal: React.FC<{
               <Form.Item name="isHidden" valuePropName="checked" style={{ marginBottom: 0 }}>
                 <Switch />
               </Form.Item>
-              <Text type="secondary">在内容集合表格展示、编辑内容时隐藏该字段</Text>
+              <Text type="secondary">在内容集合表格展示时隐藏该字段</Text>
             </Form.Item>
           </div>
         </Form.Item>
@@ -380,7 +387,7 @@ const getFormInitailValues = (action: 'edit' | 'create', field: SchemaField) => 
     return field
   }
 
-  const createInitialValues: any = {}
+  const createInitialValues: Partial<SchemaField> = {}
   if (type === 'Enum') {
     createInitialValues.enumElementType = 'string'
   }
@@ -391,6 +398,10 @@ const getFormInitailValues = (action: 'edit' | 'create', field: SchemaField) => 
 
   if (type === 'File' || type === 'Image') {
     createInitialValues.resourceLinkType = 'fileId'
+  }
+
+  if (type === 'Media') {
+    createInitialValues.mediaType = 'music'
   }
 
   return createInitialValues

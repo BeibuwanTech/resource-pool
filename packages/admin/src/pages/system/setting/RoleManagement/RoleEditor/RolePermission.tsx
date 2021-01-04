@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRequest } from 'umi'
 import { getSchemas } from '@/services/schema'
 import { getProjects } from '@/services/project'
@@ -18,7 +18,14 @@ const RolePermission: React.FC<{
   const [permissionType, setPermissionType] = useState('project')
   const [formValue, setFormValue] = useState<any>({})
 
-  // 加载资源池
+  // 设置 formValue
+  useEffect(() => {
+    if (initialValues) {
+      setFormValue(initialValues)
+    }
+  }, [initialValues])
+
+  // 加载项目
   const { data: projects = [], loading: projectLoading } = useRequest(() => getProjects(), {
     cacheKey: 'setting-role-project',
   })
@@ -77,21 +84,26 @@ const RolePermission: React.FC<{
               <div>
                 {fields?.map((field, index) => {
                   const permission = formValue?.permissions?.[field.name]
+                  console.log(permission)
                   return (
                     <Form.Item key={index}>
                       <Row gutter={24} align="middle">
-                        <Col flex="1 1 auto">
+                        <Col flex="0 0 120px">
                           <Form.Item
                             noStyle
                             name={[field.name, 'projectId']}
                             rules={[
                               {
                                 required: true,
-                                message: '请选择用户角色！',
+                                message: '请选择项目！',
                               },
                             ]}
                           >
-                            <Select loading={projectLoading} placeholder="资源池">
+                            <Select
+                              loading={projectLoading}
+                              placeholder="资源池"
+                              dropdownMatchSelectWidth={false}
+                            >
                               <Select.Option key="all" value="*">
                                 全部资源池
                               </Select.Option>
@@ -103,7 +115,7 @@ const RolePermission: React.FC<{
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col flex="1 1 auto">
+                        <Col flex="1 1 120px">
                           <Form.Item
                             noStyle
                             name={[field.name, 'action']}
@@ -123,7 +135,7 @@ const RolePermission: React.FC<{
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col flex="0 0 320px">
+                        <Col flex="0 0 120px">
                           <Form.Item
                             noStyle
                             name={[field.name, 'service']}
@@ -134,8 +146,12 @@ const RolePermission: React.FC<{
                               },
                             ]}
                           >
-                            <Select placeholder="资源池中的服务">
-                              <Select.Option value="*">
+                            <Select
+                              placeholder="资源池中的服务"
+                              optionLabelProp="label"
+                              dropdownMatchSelectWidth={false}
+                            >
+                              <Select.Option value="*" label="全部服务">
                                 <h4>全部服务</h4>
                                 <div>资源模型、资源集合、资源服务等全部服务</div>
                               </Select.Option>
@@ -266,6 +282,7 @@ const ResourceSelect: React.FC<{
       onChange={(v) => onChange?.(v)}
       onFocus={() => {
         if (!service) {
+          console.log(service)
           message.error('请选择服务')
         } else if (!projectId) {
           message.error('请选择资源池')

@@ -20,6 +20,8 @@ export const dateToUnixTimestampInMs = (date?: string) => {
   return unixTime
 }
 
+export const getUnixTimestamp = () => dayjs().unix()
+
 /**
  * 获取 2020-08-08 格式的时间
  */
@@ -27,6 +29,8 @@ export const getFullDate = (date?: string) => {
   // 毫秒
   return dayjs(date).format('YYYY-MM-DD')
 }
+
+export const getNow = () => dayjs().toISOString()
 
 /**
  * 格式化 data 中的时间类型，转换成 Native Date 类型

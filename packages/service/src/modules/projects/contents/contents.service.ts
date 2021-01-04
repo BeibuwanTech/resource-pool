@@ -1,13 +1,8 @@
 import _ from 'lodash'
 import R from 'ramda'
 import { Injectable } from '@nestjs/common'
-import { CloudBaseService, LocalCacheService } from '@/services'
-import {
-  dateToUnixTimestampInMs,
-  formatPayloadDate,
-  getCollectionSchema,
-  isNotEmpty,
-} from '@/utils'
+import { CloudBaseService, LocalCacheService, SchemaCacheService } from '@/services'
+import { isNotEmpty, formatPayloadDate, dateToUnixTimestampInMs, logger } from '@/utils'
 import { Collection } from '@/constants'
 import { BadRequestException, RecordNotExistException } from '@/common'
 import { Schema, SchemaField } from '../schemas/types'
@@ -16,22 +11,27 @@ import { Schema, SchemaField } from '../schemas/types'
 export class ContentsService {
   constructor(
     private cloudbaseService: CloudBaseService,
-    private readonly cacheService: LocalCacheService
+    private readonly cacheService: LocalCacheService,
+    private readonly schemaCacheService: SchemaCacheService
   ) {}
 
   async getMany(
     resource: string,
     options: {
+      // 过滤
       filter?: {
         _id?: string
         ids?: string[]
         [key: string]: any
       }
+      // 模糊查询
       fuzzyFilter?: {
         [key: string]: any
       }
+      // 分页
       pageSize?: number
       page?: number
+      // 排序
       sort?: {
         [key: string]: 'ascend' | 'ascend'
       }
@@ -48,7 +48,10 @@ export class ContentsService {
       where._id = db.command.in(filter.ids)
     }
 
-    const schema = await getCollectionSchema(resource)
+    // 获取所有 Schema 数据
+    const schemas = await this.schemaCacheService.getCollectionSchema()
+    // 当前 Schema 配置
+    const schema = schemas.find((_) => _.collectionName === resource)
 
     // 模糊搜索
     if (fuzzyFilter && schema) {
@@ -74,7 +77,7 @@ export class ContentsService {
         })
     }
 
-    console.log('where', where)
+    logger.info(where, 'where')
 
     let query = collection.where(where)
 
@@ -111,6 +114,13 @@ export class ContentsService {
       // 存在关联类型字段
       const connectFields = schema.fields.filter((field) => field.type === 'Connect')
       if (!R.isEmpty(connectFields)) {
+        // 存储 connect schema，以确认是否发生循环关联
+        const connectTraverseCollections = this.cacheService.get('connectTraverseCollections') || []
+        this.cacheService.set(
+          'connectTraverseCollections',
+          connectTraverseCollections.concat([schema.collectionName])
+        )
+        // 获取 connect 数据
         res.data = await this.transformConnectField(res.data, connectFields)
       }
     }
@@ -143,7 +153,7 @@ export class ContentsService {
 
     if (resource !== Collection.Webhooks) {
       // 查询 schema 信息
-      const schema = await getCollectionSchema(resource)
+      const schema = await this.schemaCacheService.getCollectionSchema(resource)
 
       if (!schema) {
         throw new RecordNotExistException('模型记录不存在')
@@ -204,7 +214,7 @@ export class ContentsService {
 
     if (resource !== Collection.Webhooks) {
       // 查询 schema 信息
-      const schema = await getCollectionSchema(resource)
+      const schema = await this.schemaCacheService.getCollectionSchema(resource)
 
       if (!schema) {
         throw new RecordNotExistException('模型记录不存在')
@@ -309,7 +319,6 @@ export class ContentsService {
     Object.keys(fuzzyFilter)
       .filter((key) => typeof fuzzyFilter[key] !== 'undefined' && fuzzyFilter[key] !== null)
       .forEach((key) => {
-        console.log(key)
         const value = fuzzyFilter[key]
 
         if (typeof value === 'boolean' || typeof value === 'number' || key === '_id') {
@@ -351,17 +360,10 @@ export class ContentsService {
    */
   private async transformConnectField(docs: any[], connectFields: SchemaField[]) {
     let resData: any[] = docs
+    const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
-    let schemas = []
-    // 缓存的 Schema 数据
-    const cachedSchemas = this.cacheService.get('schemas')
-    if (cachedSchemas?.length) {
-      schemas = cachedSchemas
-    } else {
-      schemas = await getCollectionSchema()
-      this.cacheService.set('schemas', schemas)
-    }
+    const schemas = await this.schemaCacheService.getCollectionSchema()
 
     // 转换 data 中的关联 field
     const transformDataByField = async (field: SchemaField) => {
@@ -385,17 +387,36 @@ export class ContentsService {
       }
 
       // 关联的 Schema
-      const connectSchema = schemas.find((schema) => schema._id === field.connectResource)
+      const collectionName = schemas.find((schema) => schema._id === field.connectResource)
+        ?.collectionName
 
       // 获取关联 id 对应的 Doc
       // 使用 getMany 获取数据，自动转换 Connect 字段
-      const { data: connectData } = await this.getMany(connectSchema.collectionName, {
-        page: 1,
-        pageSize: 1000,
-        filter: {
-          ids,
-        },
-      })
+      let connectData = []
+      // 是否发生循环关联
+      const existCircle = this.cacheService
+        .get('connectTraverseCollections')
+        .includes(collectionName)
+
+      // 存在环且会在当前的节点发生循环，直接获取底层数据
+      if (existCircle) {
+        const { data } = await this.cloudbaseService
+          .collection(collectionName)
+          .where({ _id: $.in(ids) })
+          .limit(1000)
+          .get()
+        connectData = data
+      } else {
+        // 不发生循环，获取关联转换的数据
+        const { data } = await this.getMany(collectionName, {
+          page: 1,
+          pageSize: 1000,
+          filter: {
+            ids,
+          },
+        })
+        connectData = data
+      }
 
       // 修改 resData 中的关联字段
       resData = resData.map((record) => {

@@ -1,17 +1,44 @@
+import _ from 'lodash'
 import React, { useCallback } from 'react'
-import { Form, Space, Button, Row, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
+import {
+  Form,
+  Space,
+  Button,
+  Row,
+  Input,
+  Switch,
+  Select,
+  Tooltip,
+  Modal,
+  message,
+  InputNumber,
+} from 'antd'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
 import { calculateFieldWidth } from '@/utils'
+import { updateSchema } from '@/services/schema'
+import { useParams, useRequest } from 'umi'
 
 const { Option } = Select
 
+// 判断两个 field 数组是否包含相同的 field
+const isFieldSame = (field1: any[], field2: any[]) => {
+  if (field1.length !== field2.length) return false
+
+  return _.differenceBy(field1, field2, 'name')?.length === 0
+}
+
+/**
+ * 内容搜索表单
+ */
 const ContentTableSearchForm: React.FC<{
   schema: Schema
   onSearch: (v: Record<string, any>) => void
-}> = ({ onSearch }) => {
+}> = ({ schema, onSearch }) => {
+  const [form] = Form.useForm()
+  const { projectId } = useParams<any>()
   const ctx = useConcent<{}, ContentCtx>('content')
   const { searchFields, searchParams } = ctx.state
 
@@ -20,11 +47,27 @@ const ContentTableSearchForm: React.FC<{
     ctx.mr.removeSearchField(field)
   }, [])
 
+  // 保存检索条件
+  const { run: saveSearchFields, loading } = useRequest(
+    async () => {
+      await updateSchema(projectId, schema._id, {
+        searchFields,
+      })
+      ctx.mr.getContentSchemas(projectId)
+    },
+    {
+      manual: true,
+      onSuccess: () => message.success('保存检索条件成功！'),
+      onError: (e) => message.error(e.message || '保存检索条件失败！'),
+    }
+  )
+
   return (
     <div>
       {searchFields.length ? (
         <Form
           name="basic"
+          form={form}
           layout="inline"
           initialValues={searchParams}
           style={{ marginTop: '15px' }}
@@ -42,18 +85,59 @@ const ContentTableSearchForm: React.FC<{
               </Space>
             ))}
             <Space style={{ marginBottom: '10px' }}>
-              <Button
-                type="primary"
-                onClick={() => {
-                  ctx.mr.clearSearchField()
-                  onSearch({})
-                }}
-              >
-                重置
-              </Button>
+              <Tooltip title="删除所有检索条件">
+                <Button
+                  onClick={() => {
+                    const modal = Modal.confirm({
+                      title: '是否删除保存的检索条件？',
+                      onCancel: () => {
+                        modal.destroy()
+                      },
+                      onOk: async () => {
+                        try {
+                          await updateSchema(projectId, schema._id, {
+                            searchFields: [],
+                          })
+                          message.success('重置检索条件成功！')
+                          ctx.mr.getContentSchemas(projectId)
+                        } catch (error) {
+                          message.error('重置检索条件失败！')
+                        }
+                      },
+                    })
+                    // 重置检索条件
+                    ctx.mr.clearSearchField()
+                    onSearch({})
+                  }}
+                >
+                  删除
+                </Button>
+              </Tooltip>
+
+              <Tooltip title="清空搜索输入值，重新搜索">
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    form.resetFields()
+                    onSearch({})
+                  }}
+                >
+                  重置搜索
+                </Button>
+              </Tooltip>
+
               <Button type="primary" htmlType="submit">
                 搜索
               </Button>
+
+              {/* 仅字段不同时，才显示保存按钮 */}
+              {!isFieldSame(searchFields, schema.searchFields) && (
+                <Tooltip title="保存检索条件，下次直接搜索">
+                  <Button type="primary" loading={loading} onClick={saveSearchFields}>
+                    保存
+                  </Button>
+                </Tooltip>
+              )}
             </Space>
           </Row>
         </Form>
@@ -101,16 +185,11 @@ const getSearchFieldItem = (field: SchemaField, key: number) => {
       break
 
     case 'Date':
-      FormItem = (
-        <Form.Item key={key} name={name} label={displayName}>
-          <IDatePicker type="Date" dateFormatType={field.dateFormatType} />
-        </Form.Item>
-      )
-      break
+    case 'Time':
     case 'DateTime':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <IDatePicker type="DateTime" dateFormatType={field.dateFormatType} />
+          <IDatePicker type={type} dateFormatType={field.dateFormatType} />
         </Form.Item>
       )
       break

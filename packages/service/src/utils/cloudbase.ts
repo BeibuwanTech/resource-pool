@@ -6,9 +6,12 @@ import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
 import { Collection } from '@/constants'
 import { isDevEnv } from './tools'
 import { MemoryCache } from './cache'
+import { getUnixTimestamp } from './date'
+import { logger } from './log'
 
 let nodeApp
 let managerApp
+let secretExpire: number
 let secretManager: SecretManager
 const schemaCache = new MemoryCache()
 
@@ -49,7 +52,11 @@ export const getCloudBaseApp = () => {
  * 获取初始化后的 cloudbase manager sdk 实例
  */
 export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
-  if (managerApp) {
+  // +120 缓冲时间
+  const now = getUnixTimestamp() + 120
+
+  // 秘钥没有过期，可以继续使用，否则，需要重新获取秘钥
+  if (managerApp && now < secretExpire) {
     return managerApp
   }
 
@@ -70,7 +77,8 @@ export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
   // 云托管中
   if (isRunInContainer()) {
     secretManager = new SecretManager()
-    const { secretId, secretKey, token } = await secretManager.getTmpSecret()
+    const { secretId, secretKey, token, expire } = await secretManager.getTmpSecret()
+    secretExpire = expire
     options = { ...options, secretId, secretKey, token }
   }
 
@@ -106,7 +114,7 @@ export const getUserFromCredential = async (credential: string, origin: string) 
   })
 
   if (res.data?.code || !res.data?.uuid) {
-    console.log('获取用户信息失败', res.data)
+    logger.error(res.data, '获取用户信息失败')
     return null
   }
 
@@ -120,8 +128,10 @@ export async function getCollectionSchema(collection: string): Promise<Schema>
 export async function getCollectionSchema(): Promise<Schema[]>
 
 export async function getCollectionSchema(collection?: string) {
+  // 全部 schemas 使用 SCHEMAS 作为 key 缓存
   const cacheSchema = collection ? schemaCache.get(collection) : schemaCache.get('SCHEMAS')
-  if (cacheSchema) return cacheSchema
+  // 容器模式，才启用本地缓存
+  if (cacheSchema && isRunInContainer()) return cacheSchema
 
   const app = getCloudBaseApp()
 
@@ -163,12 +173,11 @@ export const isRunInServerMode = () =>
   !process.env.TENCENTCLOUD_RUNENV ||
   !!process.env.KUBERNETES_SERVICE_HOST
 
+// 是否在云函数中运行
+export const isInSCF = () => process.env.TENCENTCLOUD_RUNENV === 'scf'
+
 // 是否在云托管中运行
 export const isRunInContainer = () => !!process.env.KUBERNETES_SERVICE_HOST
-
-/**
- * 从容器运行环境中获取临时秘钥
- */
 
 interface Secret {
   secretId: string
@@ -176,6 +185,10 @@ interface Secret {
   token: string
   expire: number // 过期时间，单位：秒
 }
+
+/**
+ * 从容器运行环境中获取临时秘钥
+ */
 export default class SecretManager {
   private tmpSecret: Secret | null
   private TMP_SECRET_URL: string
